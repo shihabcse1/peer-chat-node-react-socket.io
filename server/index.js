@@ -14,6 +14,19 @@ const io = new Server(server, {
     },
 });
 
+io.on("connection", (socket) => {
+    console.log(`New User Connected id: ${socket.id}`);
+
+    socket.on("join_room", (data) => {
+        socket.join(data);
+        console.log(`User Id: ${socket.id} Room name: ${data}`);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User Disconnected", socket.id);
+    });
+});
+
 server.listen(5000, () => {
     console.log("Server Running at Port 5000");
 });
