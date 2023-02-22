@@ -1,9 +1,11 @@
+import EmojiPicker from "emoji-picker-react";
 import React, { useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 
 const Chat = ({ socket, username, room }) => {
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
+    const [isShowEmojiPicker, setIsShowEmojiPIcker] = useState(false);
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -23,6 +25,14 @@ const Chat = ({ socket, username, room }) => {
         }
     };
 
+    const showEmojiPicker = () => {
+        if (isShowEmojiPicker) {
+            setIsShowEmojiPIcker(false);
+        } else {
+            setIsShowEmojiPIcker(true);
+        }
+    };
+
     useEffect(() => {
         socket.on("receive_message", (data) => {
             setMessageList((list) => [...list, data]);
@@ -31,7 +41,8 @@ const Chat = ({ socket, username, room }) => {
     return (
         <div className="chat-window">
             <div className="chat-header">
-                <p>Live Chat</p>
+                <span class="dot"></span>
+                <p>{username}</p>
             </div>
             <div className="chat-body">
                 <ScrollToBottom className="message-container">
@@ -60,8 +71,12 @@ const Chat = ({ socket, username, room }) => {
                         );
                     })}
                 </ScrollToBottom>
+                {isShowEmojiPicker && <EmojiPicker height={300} width={200} />}
             </div>
             <div className="chat-footer">
+                <button onClick={showEmojiPicker}>
+                    <span class="bi bi-emoji-smile smile-face"></span>
+                </button>
                 <input
                     type="text"
                     value={currentMessage}
@@ -73,7 +88,9 @@ const Chat = ({ socket, username, room }) => {
                         event.key === "Enter" && sendMessage();
                     }}
                 />
-                <button onClick={sendMessage}>Send</button>
+                <button onClick={sendMessage}>
+                    <i class="bi bi-chat-dots"></i>
+                </button>
             </div>
         </div>
     );
